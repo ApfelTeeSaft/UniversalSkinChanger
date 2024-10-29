@@ -8,9 +8,6 @@
 - Just get it from the Releases section from this Repository
 - **NOTE** a Injector with a GUI to change ur skin (a similar GUI to the FortnitePorting Tool) is planned for the Future!
 
-## Is this Safe?
-- Please... it's open source, use ur brain 😭
-
 ## Contributing
 - Contributions are always Welcome!!!
 
