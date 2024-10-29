@@ -4,9 +4,9 @@
 #include <string>
 #include <windows.h>
 
-SDK::UEngine* Engine = SDK::UEngine::GetEngine();
-SDK::UWorld* World = SDK::UWorld::GetWorld();
-SDK::APlayerController* AFortPlayerController = World->OwningGameInstance->LocalPlayers[0]->PlayerController;
+extern SDK::UEngine* Engine;
+extern SDK::UWorld* World;
+extern SDK::APlayerController* AFortPlayerController;
 
 enum class LogLevel {
     Info,

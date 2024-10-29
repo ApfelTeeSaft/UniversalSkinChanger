@@ -6,23 +6,67 @@ void Initialize()
 {
     SDK::ULevel* Level = World->PersistentLevel;
     SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
+
+    SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObject<SDK::UCustomCharacterPart>("CP_Backpack_IceCream.CP_Backpack_IceCream");
+    SDK::AFortPlayerPawn* TargetPawn = nullptr;
+
+    if (!BackpackPart)
+    {
+        LOGFN("UCustomCharacterPart: CP_Backpack_IceCream not Found!", LogLevel::Error);
+        return;
+    }
+
     for (SDK::AActor* Actor : Actors)
     {
         if (!Actor || !Actor->IsA(SDK::EClassCastFlags::Pawn) || !Actor->IsA(SDK::AFortPlayerPawn::StaticClass()))
             continue;
 
-        SDK::AFortPlayerPawn* Pawn = static_cast<SDK::AFortPlayerPawn*>(Actor);
-        Pawn->ServerChoosePart();
+        TargetPawn = static_cast<SDK::AFortPlayerPawn*>(Actor);
+        break;
+    }
+
+    if (TargetPawn)
+    {
+        TargetPawn->ServerChoosePart(SDK::EFortCustomPartType::Backpack, BackpackPart);
+    }
+    else
+    {
+        LOGFN("No valid AFortPlayerPawn found!", LogLevel::Error);
     }
 }
+
+//void TempInit()
+//{
+//    for (int i = 0; i < SDK::UObject::GObjects->Num(); i++)
+//    {
+//        SDK::UObject* Obj = SDK::UObject::GObjects->GetByIndex(i);
+//
+//        if (!Obj)
+//            continue;
+//
+//        if (Obj->IsDefaultObject())
+//            continue;
+//
+//        if (Obj->IsA(SDK::UCustomCharacterPart::StaticClass()))
+//        {
+//            std::string ObjFullName = Obj->GetFullName();
+//            LOGFN(ObjFullName, LogLevel::Info);
+//        }
+//    }
+//}
 
 DWORD WINAPI Main(LPVOID)
 {
     AllocConsole();
     FILE* File;
-    freopen_s(&File, "CONOUT$", "w+", stdout);
+    SetStdHandle(STD_OUTPUT_HANDLE, NULL);
+    SetStdHandle(STD_ERROR_HANDLE, NULL);
+    freopen_s(&File, "CONOUT$", "w", stdout);
+    freopen_s(&File, "CONOUT$", "w", stderr);
     SetConsoleTitleA("UniversalSkinChanger - Dev-v0.0.0.1");
     Addresses::SetupVersion();
+    Initialize();
+    LOGFN("UniversalSkinChanger initialized.", LogLevel::Info);
     return 0;
 }
 

@@ -148,6 +148,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="addresses.cpp" />
+    <ClCompile Include="CppSDK\SDK\Basic.cpp" />
+    <ClCompile Include="CppSDK\SDK\CoreUObject_functions.cpp" />
+    <ClCompile Include="CppSDK\SDK\Engine_functions.cpp" />
+    <ClCompile Include="CppSDK\SDK\FortniteGame_functions.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="globals.cpp" />
   </ItemGroup>

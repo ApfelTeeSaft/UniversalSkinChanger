@@ -2,10 +2,13 @@
 #include <iostream>
 #include <windows.h>
 
+SDK::UEngine* Engine = SDK::UEngine::GetEngine();
+SDK::UWorld* World = SDK::UWorld::GetWorld();
+SDK::APlayerController* AFortPlayerController = World->OwningGameInstance->LocalPlayers[0]->PlayerController;
+
 void LOGFN(const std::string& message, LogLevel level) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // Determine log level as text
     std::string levelText;
     switch (level) {
     case LogLevel::Info:
@@ -22,9 +25,6 @@ void LOGFN(const std::string& message, LogLevel level) {
         break;
     }
 
-    // Print the log message with log level prefix
     std::cout << "[" << levelText << "] " << message << std::endl;
-
-    // Reset color to white
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
