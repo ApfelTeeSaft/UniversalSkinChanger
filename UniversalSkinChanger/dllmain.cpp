@@ -2,6 +2,20 @@
 #include "addresses.h"
 #include "globals.h"
 
+void Initialize()
+{
+    SDK::ULevel* Level = World->PersistentLevel;
+    SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
+    for (SDK::AActor* Actor : Actors)
+    {
+        if (!Actor || !Actor->IsA(SDK::EClassCastFlags::Pawn) || !Actor->IsA(SDK::AFortPlayerPawn::StaticClass()))
+            continue;
+
+        SDK::AFortPlayerPawn* Pawn = static_cast<SDK::AFortPlayerPawn*>(Actor);
+        Pawn->ServerChoosePart();
+    }
+}
+
 DWORD WINAPI Main(LPVOID)
 {
     AllocConsole();
