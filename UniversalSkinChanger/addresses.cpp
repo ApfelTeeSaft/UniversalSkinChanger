@@ -2,17 +2,20 @@
 #include <string>
 #include "memcury.h"
 #include "globals.h"
+#include "addresses.h"
 
 void Addresses::SetupVersion()
 {
-	static FString(*GetEngineVersion)() = decltype(GetEngineVersion)(Memcury::Scanner::FindPattern("40 53 48 83 EC 20 48 8B D9 E8 ? ? ? ? 48 8B C8 41 B8 04 ? ? ? 48 8B D3", false).Get());
+	LOGFN("Entered SetupVersion!", LogLevel::Info);
+	static SDK::FString(*GetEngineVersion)() = decltype(GetEngineVersion)(Memcury::Scanner::FindPattern("40 53 48 83 EC 20 48 8B D9 E8 ? ? ? ? 48 8B C8 41 B8 04 ? ? ? 48 8B D3").Get());
 
 	std::string FullVersion;
-	FString toFree;
+	SDK::FString toFree;
 
 	if (!GetEngineVersion)
 	{
 		auto VerStr = Memcury::Scanner::FindPattern("2B 2B 46 6F 72 74 6E 69 74 65 2B 52 65 6C 65 61 73 65 2D ? ? ? ?").Get();
+		std::cout << "Found VerString!" << std::endl;
 
 		// if (!VerStr)
 
@@ -72,7 +75,7 @@ void Addresses::SetupVersion()
 
 	// Fortnite_Season = std::floor(Fortnite_Version);
 
-	FFastArraySerializer::bNewSerializer = Fortnite_Version >= 8.30;
+	// SDK::FFastArraySerializer::bNewSerializer = Fortnite_Version >= 8.30;
 
 	if (Fortnite_CL == 3700114)
 		Fortnite_Version = 1.72;
@@ -95,5 +98,6 @@ void Addresses::SetupVersion()
 	if (Fortnite_CL == 3870737)
 		Fortnite_Version = 2.42;
 
-	toFree.Free();
+	// toFree.Free();
+	LOGFN("Reached end of addresses find!", LogLevel::Warning);
 }

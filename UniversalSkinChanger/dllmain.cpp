@@ -1,6 +1,6 @@
 // dllmain.cpp : Definiert den Einstiegspunkt für die DLL-Anwendung.
 #include "addresses.h"
-
+#include "globals.h"
 
 DWORD WINAPI Main(LPVOID)
 {
@@ -8,7 +8,7 @@ DWORD WINAPI Main(LPVOID)
     FILE* File;
     freopen_s(&File, "CONOUT$", "w+", stdout);
     SetConsoleTitleA("UniversalSkinChanger - Dev-v0.0.0.1");
-    SetupVersion();
+    Addresses::SetupVersion();
     return 0;
 }
 

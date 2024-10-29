@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="addresses.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="globals.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
