@@ -6,23 +6,14 @@ void Initialize()
 {
     SDK::ULevel* Level = World->PersistentLevel;
     SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
+    // SDK::AFortPlayerPawn* TargetPawn = static_cast<SDK::AFortPlayerPawn*>(AFortPlayerController->K2_GetPawn());
+    SDK::AFortPlayerPawnAthena* TargetPawn = static_cast<SDK::AFortPlayerPawnAthena*>(AFortPlayerController->Pawn);
 
-    SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObject<SDK::UCustomCharacterPart>("CP_Backpack_IceCream.CP_Backpack_IceCream");
-    SDK::AFortPlayerPawn* TargetPawn = nullptr;
-
+    SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_TennisFemale");
     if (!BackpackPart)
     {
-        LOGFN("UCustomCharacterPart: CP_Backpack_IceCream not Found!", LogLevel::Error);
+        LOGFN("UCustomCharacterPart: CP_Backpack_TennisFemale Not Found!", LogLevel::Error);
         return;
-    }
-
-    for (SDK::AActor* Actor : Actors)
-    {
-        if (!Actor || !Actor->IsA(SDK::EClassCastFlags::Pawn) || !Actor->IsA(SDK::AFortPlayerPawn::StaticClass()))
-            continue;
-
-        TargetPawn = static_cast<SDK::AFortPlayerPawn*>(Actor);
-        break;
     }
 
     if (TargetPawn)
