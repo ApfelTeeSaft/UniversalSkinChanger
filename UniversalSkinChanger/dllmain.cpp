@@ -1,15 +1,15 @@
-// dllmain.cpp : Definiert den Einstiegspunkt für die DLL-Anwendung.
+#include <Windows.h>
 #include "addresses.h"
 #include "globals.h"
 
 void Initialize()
 {
+    LOGFN("Changing Skin...", LogLevel::Info);
     SDK::ULevel* Level = World->PersistentLevel;
     SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
-    // SDK::AFortPlayerPawn* TargetPawn = static_cast<SDK::AFortPlayerPawn*>(AFortPlayerController->K2_GetPawn());
     SDK::AFortPlayerPawnAthena* TargetPawn = static_cast<SDK::AFortPlayerPawnAthena*>(AFortPlayerController->Pawn);
 
-    SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_TennisFemale");
+    SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_LoveLlama");
     if (!BackpackPart)
     {
         LOGFN("UCustomCharacterPart: CP_Backpack_TennisFemale Not Found!", LogLevel::Error);
@@ -26,26 +26,6 @@ void Initialize()
     }
 }
 
-//void TempInit()
-//{
-//    for (int i = 0; i < SDK::UObject::GObjects->Num(); i++)
-//    {
-//        SDK::UObject* Obj = SDK::UObject::GObjects->GetByIndex(i);
-//
-//        if (!Obj)
-//            continue;
-//
-//        if (Obj->IsDefaultObject())
-//            continue;
-//
-//        if (Obj->IsA(SDK::UCustomCharacterPart::StaticClass()))
-//        {
-//            std::string ObjFullName = Obj->GetFullName();
-//            LOGFN(ObjFullName, LogLevel::Info);
-//        }
-//    }
-//}
-
 DWORD WINAPI Main(LPVOID)
 {
     AllocConsole();
@@ -56,15 +36,24 @@ DWORD WINAPI Main(LPVOID)
     freopen_s(&File, "CONOUT$", "w", stderr);
     SetConsoleTitleA("UniversalSkinChanger - Dev-v0.0.0.1");
     Addresses::SetupVersion();
-    Initialize();
     LOGFN("UniversalSkinChanger initialized.", LogLevel::Info);
+
+    while (true)
+    {
+        if (GetAsyncKeyState(VK_F3) & 0x8000)
+        {
+            Initialize();
+            Sleep(200);
+        }
+        Sleep(10);
+    }
+
     return 0;
 }
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+BOOL APIENTRY DllMain(HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
     {
@@ -77,4 +66,3 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }
-
