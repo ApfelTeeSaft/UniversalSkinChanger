@@ -12,7 +12,7 @@ void Initialize()
     SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_LoveLlama");
     if (!BackpackPart)
     {
-        LOGFN("UCustomCharacterPart: CP_Backpack_TennisFemale Not Found!", LogLevel::Error);
+        LOGFN("UCustomCharacterPart: CP_Backpack_LoveLlama Not Found!", LogLevel::Error);
         return;
     }
 
@@ -37,6 +37,7 @@ DWORD WINAPI Main(LPVOID)
     SetConsoleTitleA("UniversalSkinChanger - Dev-v0.0.0.1");
     Addresses::SetupVersion();
     LOGFN("UniversalSkinChanger initialized.", LogLevel::Info);
+    LOGFN("UniversalSkinChanger made with <3 by ApfelTeeSaft", LogLevel::Info);
 
     while (true)
     {
