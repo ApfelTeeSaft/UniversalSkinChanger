@@ -7,7 +7,7 @@ void Initialize()
     LOGFN("Changing Skin...", LogLevel::Info);
     SDK::ULevel* Level = World->PersistentLevel;
     SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
-    SDK::AFortPlayerPawnAthena* TargetPawn = static_cast<SDK::AFortPlayerPawnAthena*>(AFortPlayerController->Pawn);
+    SDK::AFortPlayerPawnAthena* TargetPawn = static_cast<SDK::AFortPlayerPawnAthena*>(AFortPlayerController->K2_GetPawn());
 
     SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_LoveLlama");
     if (!BackpackPart)
