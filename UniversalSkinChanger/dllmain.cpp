@@ -5,9 +5,11 @@
 void Initialize()
 {
     LOGFN("Changing Skin...", LogLevel::Info);
-    SDK::ULevel* Level = World->PersistentLevel;
-    SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
+    // SDK::ULevel* Level = World->PersistentLevel;
     SDK::AFortPlayerPawnAthena* TargetPawn = static_cast<SDK::AFortPlayerPawnAthena*>(AFortPlayerController->K2_GetPawn());
+
+    std::string TargetPawnName = TargetPawn->Name.GetRawString();
+	std::cout << "Changing Skin of " << TargetPawnName.c_str() << std::endl;
 
     SDK::UCustomCharacterPart* BackpackPart = SDK::UObject::FindObjectFast<SDK::UCustomCharacterPart>("CP_Backpack_LoveLlama");
     if (!BackpackPart)
