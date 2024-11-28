@@ -1,8 +1,10 @@
 #include <Windows.h>
 #include "addresses.h"
 #include "globals.h"
+#include <sstream>
+#include "iostream"
 
-void Initialize()
+void Initialize(const std::string& backpackName)
 {
     LOGFN("Changing Skin...", LogLevel::Info);
     // SDK::ULevel* Level = World->PersistentLevel;
@@ -35,6 +37,105 @@ void Initialize()
     }
 }
 
+void ProcessActors(std::stringstream& outputStream)
+{
+    SDK::ULevel* Level = World->PersistentLevel;
+    SDK::TArray<SDK::AActor*>& Actors = Level->Actors;
+    for (int i = 0; i < SDK::UObject::GObjects->Num(); i++)
+    {
+        SDK::UObject* Obj = SDK::UObject::GObjects->GetByIndex(i);
+
+        if (!Obj)
+            continue;
+
+        if (Obj->IsDefaultObject())
+            continue;
+
+        if (Obj->IsA(SDK::UCustomCharacterPart::StaticClass()))
+        {
+            std::string ObjFullName = Obj->GetFullName();
+            LOGFN(ObjFullName, LogLevel::Info);
+			outputStream << "Found CustomCharacterPart: " << ObjFullName << std::endl;
+        }
+    }
+}
+
+DWORD WINAPI PipeServer(LPVOID)
+{
+    const char* pipeName = "\\\\.\\pipe\\UniversalSkinChanger";
+    HANDLE pipe = CreateNamedPipeA(pipeName, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, 1, 512, 512, 0, NULL);
+
+    if (pipe == INVALID_HANDLE_VALUE)
+    {
+        LOGFN("Failed to create named pipe!", LogLevel::Error);
+        return 1;
+    }
+
+    LOGFN("Named pipe server initialized. Waiting for connections...", LogLevel::Info);
+
+    while (true)
+    {
+        if (ConnectNamedPipe(pipe, NULL) || GetLastError() == ERROR_PIPE_CONNECTED)
+        {
+            char buffer[512];
+            DWORD bytesRead;
+            if (ReadFile(pipe, buffer, sizeof(buffer) - 1, &bytesRead, NULL))
+            {
+                buffer[bytesRead] = '\0';
+                std::string backpackName(buffer);
+                LOGFN(("Received backpack name: " + backpackName).c_str(), LogLevel::Info);
+
+                Initialize(backpackName);
+            }
+            DisconnectNamedPipe(pipe);
+        }
+    }
+    CloseHandle(pipe);
+    return 0;
+}
+
+DWORD WINAPI PipeServer2(LPVOID)
+{
+    const char* pipeName = "\\\\.\\pipe\\UniversalSkinChanger_Actors";
+    HANDLE pipe = CreateNamedPipeA(pipeName, PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, 1, 512, 512, 0, NULL);
+
+    if (pipe == INVALID_HANDLE_VALUE)
+    {
+        LOGFN("Failed to create named pipe for actor processing!", LogLevel::Error);
+        return 1;
+    }
+
+    LOGFN("Named pipe server for actor processing initialized. Waiting for connections...", LogLevel::Info);
+
+    while (true)
+    {
+        if (ConnectNamedPipe(pipe, NULL) || GetLastError() == ERROR_PIPE_CONNECTED)
+        {
+            char buffer[512];
+            DWORD bytesRead;
+
+            if (ReadFile(pipe, buffer, sizeof(buffer) - 1, &bytesRead, NULL))
+            {
+                buffer[bytesRead] = '\0'; // Null-terminate the received string
+                std::string command(buffer);
+
+                if (command == "process_actors")
+                {
+                    std::stringstream outputStream;
+                    ProcessActors(outputStream);
+
+                    std::string result = outputStream.str();
+                    DWORD bytesWritten;
+                    WriteFile(pipe, result.c_str(), result.size(), &bytesWritten, NULL);
+                }
+            }
+            DisconnectNamedPipe(pipe);
+        }
+    }
+    CloseHandle(pipe);
+    return 0;
+}
+
 DWORD WINAPI Main(LPVOID)
 {
     AllocConsole();
@@ -52,7 +153,7 @@ DWORD WINAPI Main(LPVOID)
     {
         if (GetAsyncKeyState(VK_F3) & 0x8000)
         {
-            Initialize();
+            // Initialize();
             Sleep(200);
         }
         Sleep(10);
@@ -69,6 +170,8 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     {
     case DLL_PROCESS_ATTACH:
         CreateThread(0, 0, Main, 0, 0, 0);
+        CreateThread(0, 0, PipeServer, 0, 0, 0);
+        CreateThread(0, 0, PipeServer2, 0, 0, 0);
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
